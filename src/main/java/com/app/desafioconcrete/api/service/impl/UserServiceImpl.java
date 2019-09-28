@@ -1,10 +1,15 @@
 package com.app.desafioconcrete.api.service.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.UUID;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,7 +19,10 @@ import com.app.desafioconcrete.api.dto.ProfileDTO;
 import com.app.desafioconcrete.api.dto.UserDTO;
 import com.app.desafioconcrete.api.entities.Phone;
 import com.app.desafioconcrete.api.entities.User;
+import com.app.desafioconcrete.api.exception.ExcecaoSessaoInvalida;
+import com.app.desafioconcrete.api.exception.ExcecaoTokenInexistente;
 import com.app.desafioconcrete.api.exception.ExcecaoUsuarioCadastrado;
+import com.app.desafioconcrete.api.exception.ExcecaoUsuarioInvalido;
 import com.app.desafioconcrete.api.repository.PhoneRepository;
 import com.app.desafioconcrete.api.repository.UserRepository;
 import com.app.desafioconcrete.api.service.UserService;
@@ -30,53 +38,108 @@ public class UserServiceImpl implements UserService{
 	
 	@Override
 	public UserDTO createUser(User pUser) {
-		
-		User user = userRepository.findByEmail(pUser.getEmail());
-		
-		if(user != null) {
-			throw new ExcecaoUsuarioCadastrado(HttpStatus.UNAUTHORIZED);
-		}
-		
-		pUser.setDtUserCriated(LocalDate.now());
-		pUser.setDtCreationModified(LocalDateTime.now());
-		pUser.setLastUserLogin(LocalDateTime.now());
-	 	pUser.generateToken();
-
-		user = userRepository.save(pUser);
-
-		//linkamos os telefones com os usuarios 
-		if (pUser.getArrPhones() != null && !pUser.getArrPhones().isEmpty()) {
-			for (Phone phone : pUser.getArrPhones()) {
-					phone.setUser(user);
-			}
-			phoneRepository.saveAll(pUser.getArrPhones());
-		}
-
 		UserDTO userDTO = new UserDTO();
-		userDTO.setName(pUser.getName());
-		userDTO.setEmail(pUser.getEmail());
-		userDTO.setDtUserCriated(LocalDate.now());
-		userDTO.setDtCreationModified(LocalDateTime.now());
-		userDTO.setLastUserLogin(LocalDateTime.now());
-		
-		if(pUser.getArrPhones() != null && !pUser.getArrPhones().isEmpty()) {
-			userDTO.setArrPhones(pUser.getArrPhones());
+		try {
+			User user = userRepository.findByEmail(pUser.getEmail());
+			
+			if(user != null) {
+				throw new ExcecaoUsuarioCadastrado(HttpStatus.UNAUTHORIZED);
+			}
+			
+			pUser.setDtUserCriated(LocalDate.now());
+			pUser.setDtCreationModified(LocalDateTime.now());
+			pUser.setLastUserLogin(LocalDateTime.now());
+		 	pUser.generateToken();
+			pUser.setPassword(this.getEncrypted(pUser.getPassword()));
+			
+			user = userRepository.save(pUser);
+	
+			//linkamos os telefones com os usuarios 
+			if (pUser.getPhones() != null && !pUser.getPhones().isEmpty()) {
+				for (Phone phone : pUser.getPhones()) {
+						phone.setUser(user);
+				}
+				phoneRepository.saveAll(pUser.getPhones());
+			}
+			
+			userDTO.setId(pUser.getId());
+			userDTO.setName(pUser.getName());
+			userDTO.setEmail(pUser.getEmail());
+			userDTO.setDtUserCriated(LocalDate.now());
+			userDTO.setDtCreationModified(LocalDateTime.now());
+			userDTO.setLastUserLogin(LocalDateTime.now());
+			userDTO.setToken(UUID.fromString(pUser.getPassword()));
+			
+			if(pUser.getPhones() != null && !pUser.getPhones().isEmpty()) {
+				userDTO.setArrPhones(pUser.getPhones());
+			}
+			return userDTO;
+		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
 		return userDTO;
 	}
 
 	@Override
-	public UserDTO loginUser(LoginDTO pLoginDTO) {
-		// TODO Auto-generated method stub
-		return null;
+	public UserDTO loginUser(LoginDTO pLoginDTO) 
+			throws NoSuchAlgorithmException, UnsupportedEncodingException {
+
+		User user = this.userRepository.findByEmail(pLoginDTO.getEmail());
+		if(user == null) {
+			throw new ExcecaoUsuarioInvalido(HttpStatus.UNAUTHORIZED);
+		}
+		
+		//Caso a senha esteja diferente do banco de dados
+		if(!this.getEncrypted(pLoginDTO.getPassword()).equalsIgnoreCase(user.getPassword())){
+			throw new ExcecaoUsuarioInvalido(HttpStatus.UNAUTHORIZED);
+		}
+		
+		user.setLastUserLogin(LocalDateTime.now());
+		user.generateToken();
+
+		this.userRepository.save(user);
+
+		UserDTO userDTO = new UserDTO();
+		BeanUtils.copyProperties(user, userDTO);
+
+		return userDTO;
 	}
 
 	@Override
 	public UserDTO getProfile(ProfileDTO pProfileDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		User userByToken = this.userRepository.findByUserToken(UUID.fromString(pProfileDTO.getToken()));
+		if(userByToken == null) {
+			throw new ExcecaoTokenInexistente(HttpStatus.UNAUTHORIZED);
+		}
+		
+		User userById = this.userRepository.findById(UUID.fromString(pProfileDTO.getId()));
+		if(userById != null) {
+			if(userById.getUserToken().compareTo(userById.getUserToken()) != 0) {
+				//Caso o token do usuario seja diferente do passado como parametro
+				throw new ExcecaoTokenInexistente(HttpStatus.UNAUTHORIZED);
+			} else if(LocalDateTime.now().minusMinutes(30).compareTo(userById.getLastUserLogin()) > 0) {
+				//Caso a sessao tenha estourado o tempo
+				throw new ExcecaoSessaoInvalida(HttpStatus.GONE);
+			}
+		} else {
+			throw new ExcecaoTokenInexistente(HttpStatus.UNAUTHORIZED);
+		}
+		
+		UserDTO userDTO = new UserDTO();
+		BeanUtils.copyProperties(userById, userDTO);
+		return userDTO;
 	}
 
+	//Encripta a senha passada como parametro no formato SHA-256
+	public String getEncrypted(String pPassword) 
+			throws NoSuchAlgorithmException, UnsupportedEncodingException  {
+
+		MessageDigest md = MessageDigest.getInstance("SHA-256");
+		md.update(pPassword.getBytes());
+		
+		return UUID.nameUUIDFromBytes(md.digest()).toString();
+		
+	}
 	
 }

@@ -3,7 +3,11 @@ package com.app.desafioconcrete.api.entities;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -18,13 +22,16 @@ public class Phone implements Serializable{
 	
 	@Id
 	@JsonIgnore
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 		
-	private String numero;
+	private String number;
 	
 	private String ddd;
 	
 	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
 	public User getUser() {
@@ -43,12 +50,12 @@ public class Phone implements Serializable{
 		this.id = id;
 	}
 
-	public String getNumero() {
-		return numero;
+	public String getnumber() {
+		return number;
 	}
 
-	public void setNumero(String numero) {
-		this.numero = numero;
+	public void setnumber(String number) {
+		this.number = number;
 	}
 
 	public String getDdd() {

@@ -11,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -38,7 +39,8 @@ public class User implements Serializable {
 	
 	private String password;
 	
-	private List<Phone> arrPhones;
+	@OneToMany(mappedBy = "user")
+	private List<Phone> phones;
 	
 	private LocalDate dtUserCriated;
 	
@@ -70,12 +72,12 @@ public class User implements Serializable {
 		this.password = password;
 	}
 
-	public List<Phone> getArrPhones() {
-		return arrPhones;
+	public List<Phone> getPhones() {
+		return phones;
 	}
 
-	public void setArrPhones(List<Phone> arrPhones) {
-		this.arrPhones = arrPhones;
+	public void setPhones(List<Phone> arrPhones) {
+		this.phones = arrPhones;
 	}
 
 	public LocalDate getDtUserCriated() {
