@@ -3,10 +3,8 @@ package com.app.desafioconcrete.api.service.impl;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
@@ -19,10 +17,10 @@ import com.app.desafioconcrete.api.dto.ProfileDTO;
 import com.app.desafioconcrete.api.dto.UserDTO;
 import com.app.desafioconcrete.api.entities.Phone;
 import com.app.desafioconcrete.api.entities.User;
-import com.app.desafioconcrete.api.exception.ExcecaoSessaoInvalida;
-import com.app.desafioconcrete.api.exception.ExcecaoTokenInexistente;
-import com.app.desafioconcrete.api.exception.ExcecaoUsuarioCadastrado;
-import com.app.desafioconcrete.api.exception.ExcecaoUsuarioInvalido;
+import com.app.desafioconcrete.api.exceptions.ExcecaoSessaoInvalida;
+import com.app.desafioconcrete.api.exceptions.ExcecaoTokenInexistente;
+import com.app.desafioconcrete.api.exceptions.ExcecaoUsuarioCadastrado;
+import com.app.desafioconcrete.api.exceptions.ExcecaoUsuarioInvalido;
 import com.app.desafioconcrete.api.repository.PhoneRepository;
 import com.app.desafioconcrete.api.repository.UserRepository;
 import com.app.desafioconcrete.api.service.UserService;
@@ -87,12 +85,14 @@ public class UserServiceImpl implements UserService{
 
 		User user = this.userRepository.findByEmail(pLoginDTO.getEmail());
 		if(user == null) {
-			throw new ExcecaoUsuarioInvalido(HttpStatus.UNAUTHORIZED);
+			//Excecao mapeada no ResourceExceptionHandler para devolver o cod 401
+			throw new ExcecaoUsuarioInvalido();
 		}
 		
 		//Caso a senha esteja diferente do banco de dados
 		if(!this.getEncrypted(pLoginDTO.getPassword()).equalsIgnoreCase(user.getPassword())){
-			throw new ExcecaoUsuarioInvalido(HttpStatus.UNAUTHORIZED);
+			//Excecao mapeada no ResourceExceptionHandler para devolver o cod 401
+			throw new ExcecaoUsuarioInvalido();
 		}
 		
 		user.setLastUserLogin(LocalDateTime.now());

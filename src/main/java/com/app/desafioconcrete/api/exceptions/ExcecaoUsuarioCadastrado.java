@@ -1,4 +1,4 @@
-package com.app.desafioconcrete.api.exception;
+package com.app.desafioconcrete.api.exceptions;
 
 import org.springframework.http.HttpStatus;
 
