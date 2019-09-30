@@ -1,10 +1,16 @@
 package com.app.desafioconcrete.api.exceptions;
 
-import org.springframework.http.HttpStatus;
-
 public class ExcecaoTokenInexistente extends RuntimeException{
-	
-	public ExcecaoTokenInexistente(HttpStatus httpStatus) {
-		super("NÃO AUTORIZADO.");
+
+	private static final long serialVersionUID = 1L;
+
+	private static final String msg = "NÃO AUTORIZADO.";
+
+	public ExcecaoTokenInexistente () {
+		super(msg);
+	}
+
+	public ExcecaoTokenInexistente(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 }

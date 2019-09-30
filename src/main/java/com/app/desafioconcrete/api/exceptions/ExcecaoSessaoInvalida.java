@@ -1,10 +1,16 @@
 package com.app.desafioconcrete.api.exceptions;
 
-import org.springframework.http.HttpStatus;
-
 public class ExcecaoSessaoInvalida extends RuntimeException{
 	
-	public ExcecaoSessaoInvalida(HttpStatus httpStatus) {
-		super("SESSÃO INVÁLIDA!.");
+	private static final long serialVersionUID = 1L;
+
+	private static final String msg = "Sessão inválida.";
+
+	public ExcecaoSessaoInvalida () {
+		super(msg);
+	}
+
+	public ExcecaoSessaoInvalida(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 }

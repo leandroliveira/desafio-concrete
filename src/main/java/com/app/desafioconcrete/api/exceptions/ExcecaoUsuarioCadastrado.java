@@ -1,10 +1,16 @@
 package com.app.desafioconcrete.api.exceptions;
 
-import org.springframework.http.HttpStatus;
-
 public class ExcecaoUsuarioCadastrado extends RuntimeException{
-	
-	public ExcecaoUsuarioCadastrado(HttpStatus httpStatus) {
-		super("Usuário já existe no sistema.");
+
+	private static final long serialVersionUID = 1L;
+
+	private static final String msg = "E-mail já existente.";
+
+	public ExcecaoUsuarioCadastrado () {
+		super(msg);
+	}
+
+	public ExcecaoUsuarioCadastrado(String msg, Throwable cause) {
+		super(msg, cause);
 	}
 }

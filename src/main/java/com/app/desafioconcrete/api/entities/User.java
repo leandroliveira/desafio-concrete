@@ -3,11 +3,9 @@ package com.app.desafioconcrete.api.entities;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -27,11 +25,9 @@ public class User implements Serializable {
 	@Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", columnDefinition = "VARCHAR(255)")
     private UUID id;
 	
-	@Column(columnDefinition = "VARCHAR(255)")
-    private UUID userToken;
+	private UUID token;
 	
 	private String name;
 	
@@ -42,11 +38,11 @@ public class User implements Serializable {
 	@OneToMany(mappedBy = "user")
 	private List<Phone> phones;
 	
-	private LocalDate dtUserCriated;
+	private LocalDate created;
 	
-    private LocalDateTime lastUserLogin;
+	private LocalDateTime modified;
     
-    private LocalDateTime dtCreationModified;
+	private LocalDateTime last_login;
 
 	public String getName() {
 		return name;
@@ -80,29 +76,30 @@ public class User implements Serializable {
 		this.phones = arrPhones;
 	}
 
-	public LocalDate getDtUserCriated() {
-		return dtUserCriated;
+	public LocalDate getCreated() {
+		return created;
 	}
 
-	public void setDtUserCriated(LocalDate dtUserCriated) {
-		this.dtUserCriated = dtUserCriated;
+	public void setCriated(LocalDate pUserCreated) {
+		this.created = pUserCreated;
 	}
 
-	public LocalDateTime getLastUserLogin() {
-		return lastUserLogin;
+	public LocalDateTime getModified() {
+		return modified;
 	}
 
-	public void setLastUserLogin(LocalDateTime lastUserLogin) {
-		this.lastUserLogin = lastUserLogin;
+	public void setModified(LocalDateTime pModified) {
+		this.modified = pModified;
+	}
+	
+	public LocalDateTime getLast_login() {
+		return last_login;
 	}
 
-	public LocalDateTime getDtCreationModified() {
-		return dtCreationModified;
+	public void setLast_login(LocalDateTime lastUserLogin) {
+		this.last_login = lastUserLogin;
 	}
 
-	public void setDtCreationModified(LocalDateTime dtCreationModified) {
-		this.dtCreationModified = dtCreationModified;
-	}
 	
 	public UUID getId() {
 		return id;
@@ -112,15 +109,15 @@ public class User implements Serializable {
 		this.id = id;
 	}
 
-	public UUID getUserToken() {
-		return userToken;
+	public UUID getToken() {
+		return token;
 	}
 
-	public void setUserToken(UUID userToken) {
-		this.userToken = userToken;
+	public void setToken(UUID userToken) {
+		this.token = userToken;
 	}
     
 	public void generateToken() {
-        this.userToken = UUID.randomUUID();
+        this.token = UUID.randomUUID();
     }
 }

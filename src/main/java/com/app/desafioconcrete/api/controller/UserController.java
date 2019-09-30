@@ -23,7 +23,7 @@ public class UserController {
 	@Autowired
     UserService userService;
 	
-	@PostMapping("/perfilUsuario")
+	@PostMapping("/perfil")
     public ResponseEntity<UserDTO> profile(@RequestBody ProfileDTO profileDTO) {
 
         UserDTO userDTO = userService.getProfile(profileDTO);

@@ -2,7 +2,6 @@ package com.app.desafioconcrete.api.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,10 +19,6 @@ import com.app.desafioconcrete.api.entities.Phone;
     }
 ]
 }
-Responder o código de status HTTP apropriado
-
-Em caso de sucesso, retorne o usuário, mais os campos:
-
 id: id do usuário (pode ser o próprio gerado pelo banco, porém seria interessante se fosse um UUID)
 created: data da criação do usuário
 modified: data da última atualização do usuário
@@ -35,11 +30,11 @@ public class UserDTO {
 
 	private String name;
 	private String email;
-	private List<Phone> arrPhones;
+	private List<Phone> phones;
 	private UUID id;
-	private LocalDate dtUserCriated;
-    private LocalDateTime lastUserLogin;
-    private LocalDateTime dtCreationModified;
+	private LocalDate created;
+    private LocalDateTime last_login;
+    private LocalDateTime modified;
     private UUID token;
 	public String getName() {
 		return name;
@@ -53,11 +48,11 @@ public class UserDTO {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public List<Phone> getArrPhones() {
-		return arrPhones;
+	public List<Phone> getPhones() {
+		return phones;
 	}
-	public void setArrPhones(List<Phone> arrPhones) {
-		this.arrPhones = arrPhones;
+	public void setPhones(List<Phone> arrPhones) {
+		this.phones = arrPhones;
 	}
 	public UUID getId() {
 		return id;
@@ -65,24 +60,29 @@ public class UserDTO {
 	public void setId(UUID id) {
 		this.id = id;
 	}
-	public LocalDate getDtUserCriated() {
-		return dtUserCriated;
+	
+	public LocalDate getCreated() {
+		return created;
 	}
-	public void setDtUserCriated(LocalDate dtUserCriated) {
-		this.dtUserCriated = dtUserCriated;
+	
+	public void setCreated(LocalDate dtUserCriated) {
+		this.created = dtUserCriated;
 	}
-	public LocalDateTime getLastUserLogin() {
-		return lastUserLogin;
+	
+	public LocalDateTime getModified() {
+		return modified;
 	}
-	public void setLastUserLogin(LocalDateTime lastUserLogin) {
-		this.lastUserLogin = lastUserLogin;
+	public void setModified(LocalDateTime pModified) {
+		this.modified = pModified;
 	}
-	public LocalDateTime getDtCreationModified() {
-		return dtCreationModified;
+	
+	public LocalDateTime getLast_login() {
+		return last_login;
 	}
-	public void setDtCreationModified(LocalDateTime dtCreationModified) {
-		this.dtCreationModified = dtCreationModified;
+	public void setLast_login(LocalDateTime lastUserLogin) {
+		this.last_login = lastUserLogin;
 	}
+	
 	public UUID getToken() {
 		return token;
 	}

@@ -50,11 +50,11 @@ public class Phone implements Serializable{
 		this.id = id;
 	}
 
-	public String getnumber() {
+	public String getNumber() {
 		return number;
 	}
 
-	public void setnumber(String number) {
+	public void setNumber(String number) {
 		this.number = number;
 	}
 

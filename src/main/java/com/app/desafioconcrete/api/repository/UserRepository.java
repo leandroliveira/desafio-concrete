@@ -11,6 +11,6 @@ import com.app.desafioconcrete.api.entities.User;
 public interface UserRepository extends JpaRepository<User, Long>{
 
 	User findById(UUID id);
-	User findByUserToken(UUID userToken);
+	User findByToken(UUID token);
 	User findByEmail(String email); 
 }
