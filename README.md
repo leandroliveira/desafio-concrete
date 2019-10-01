@@ -42,7 +42,7 @@ Todos os endpoints devem aceitar e responder somente JSON, inclusive ao responde
     Formato da requisição:
     {
 
-        "idUser": "055d0299-77bd-4636-becb-9610c6b2bb77", 
+        "id": "055d0299-77bd-4636-becb-9610c6b2bb77", 
         "token": "0e04c0be-bbfe-4965-ac86-763ad0a62c29"
     }
 
