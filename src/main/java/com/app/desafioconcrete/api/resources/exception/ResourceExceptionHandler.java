@@ -1,6 +1,7 @@
 package com.app.desafioconcrete.api.resources.exception;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,4 +44,10 @@ public class ResourceExceptionHandler {
 		return ResponseEntity.status(HttpStatus.GONE).body(err);
 	}
 	
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<StandardError> constraintViolation(ConstraintViolationException e, HttpServletRequest request){
+		StandardError err = new StandardError(HttpStatus.UNAUTHORIZED.value(), e.getMessage(), System.currentTimeMillis());
+		
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(err);
+	}
 }

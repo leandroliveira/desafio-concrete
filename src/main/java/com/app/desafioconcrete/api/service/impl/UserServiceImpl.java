@@ -7,6 +7,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import javax.validation.ConstraintViolationException;
+
+import org.apache.tomcat.util.ExceptionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,11 +46,16 @@ public class UserServiceImpl implements UserService{
 				throw new ExcecaoUsuarioCadastrado();
 			}
 			
+			
+			
 			pUser.setCriated(LocalDate.now());
 			pUser.setModified(LocalDateTime.now());
 			pUser.setLast_login(LocalDateTime.now());
 		 	pUser.generateToken();
-			pUser.setPassword(this.getEncrypted(pUser.getPassword()));
+		 	//So criptografa o password se vier preenchido
+		 	if(!pUser.getPassword().equals("")) {
+		 		pUser.setPassword(this.getEncrypted(pUser.getPassword()));
+		 	}
 			
 			user = userRepository.save(pUser);
 	
@@ -61,6 +69,11 @@ public class UserServiceImpl implements UserService{
 			
 			BeanUtils.copyProperties(user, userDTO);
 			return userDTO;
+		} catch (RuntimeException e) {
+			//O erro de constraint vem aninhado dentro de um RuntimeException
+			Throwable throwable = ExceptionUtils.unwrapInvocationTargetException(e).getCause().getCause();
+			if(throwable instanceof ConstraintViolationException)
+				throw new ConstraintViolationException(((ConstraintViolationException) throwable).getConstraintViolations());
 		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
@@ -120,6 +133,7 @@ public class UserServiceImpl implements UserService{
 	}
 
 	//Encripta a senha passada como parametro no formato SHA-256
+	@Override
 	public String getEncrypted(String pPassword) 
 			throws NoSuchAlgorithmException, UnsupportedEncodingException  {
 

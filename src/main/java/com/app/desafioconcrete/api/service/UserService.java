@@ -16,4 +16,5 @@ public interface UserService {
 	
 	UserDTO getProfile(ProfileDTO pProfileDTO);
 	
+	String getEncrypted(String pPassword) throws NoSuchAlgorithmException, UnsupportedEncodingException; 
 }

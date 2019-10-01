@@ -11,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -29,10 +31,14 @@ public class User implements Serializable {
 	
 	private UUID token;
 	
+	@NotBlank(message = "Name required")
 	private String name;
 	
+	@Email(message = "Email invalid")
+	@NotBlank(message = "Email required")
 	private String email;
 	
+	@NotBlank(message = "Password required")
 	private String password;
 	
 	@OneToMany(mappedBy = "user")
