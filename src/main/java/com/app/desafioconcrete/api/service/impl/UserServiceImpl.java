@@ -69,11 +69,6 @@ public class UserServiceImpl implements UserService{
 			
 			BeanUtils.copyProperties(user, userDTO);
 			return userDTO;
-		} catch (RuntimeException e) {
-			//O erro de constraint vem aninhado dentro de um RuntimeException
-			Throwable throwable = ExceptionUtils.unwrapInvocationTargetException(e).getCause().getCause();
-			if(throwable instanceof ConstraintViolationException)
-				throw new ConstraintViolationException(((ConstraintViolationException) throwable).getConstraintViolations());
 		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
