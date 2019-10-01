@@ -26,7 +26,7 @@ Todos os endpoints devem aceitar e responder somente JSON, inclusive ao responde
 
 <b>Login</b>
 
-    Endpoint: https:///desafioconcrete-leandro.herokuapp.com/api/user/login
+    Endpoint: https://desafioconcrete-leandro.herokuapp.com/api/user/login
 
     Formato da requisição:
     {
